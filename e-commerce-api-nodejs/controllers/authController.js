@@ -5,6 +5,10 @@ const UnauthenticatedError = require("../errors/unauthenticated");
 const { generateToken, attachCookiesToResponse } = require("../utils/jwt");
 const createTokenUser = require("../utils/createTokenUser");
 
+const fakeVerificationToken = ({ info }) => {
+  return info;
+};
+
 const register = async (req, res) => {
   const { name, email, password } = req.body;
   const userWithEmail = await User.findOne({ email });
@@ -16,14 +20,26 @@ const register = async (req, res) => {
   // first register user is a admin
   const isFirstAcc = (await User.countDocuments({})) === 0;
   const role = isFirstAcc ? "admin" : "user";
+  // Token that is going to be used later to verify later once the user is signing in through the frontend
+  // TODO!!
+  const verificationToken = fakeVerificationToken({ info: "fake token" });
 
-  const user = await User.create({ name, email, password, role }); // not ...req.body to not pass directly the role if inserted in postman!
-  const userToken = createTokenUser(user);
+  const user = await User.create({
+    name,
+    email,
+    password,
+    role,
+    verificationToken,
+  }); // not ...req.body to not pass directly the role if inserted in postman!
 
-  const token = generateToken({ user: userToken });
-  attachCookiesToResponse({ res, token });
-
-  return res.status(StatusCodes.CREATED).json({ user: userToken });
+  // WE will send a verification email then!! send verification token only while testing in postman
+  // TODO
+  return res
+    .status(StatusCodes.CREATED)
+    .json({
+      msg: "Success. Check your email to verify your account!",
+      verificationToken,
+    });
 };
 
 const login = async (req, res) => {
