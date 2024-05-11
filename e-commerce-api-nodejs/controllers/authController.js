@@ -89,16 +89,17 @@ const verifyEmail = async (req, res) => {
 
   const user = await User.findOne({ email });
   if (!user) {
-    throw new UnauthenticatedError("Wrong email, no user.");
+    throw new UnauthenticatedError("Verification failed");
   }
-  const userToken = await User.findOne({ email, verificationToken });
-  if (!userToken) {
-    throw new UnauthenticatedError("Token doesnt match the user!");
+  //const userToken = await User.findOne({ email, verificationToken });
+  // if (!userToken)
+  if (user.verificationToken !== verificationToken) {
+    throw new UnauthenticatedError("Verification failed");
   }
-  userToken.isVerified = true;
-  userToken.verified = Date.now();
-  userToken.verificationToken = ""; // bcs already verified
-  await userToken.save();
+  user.isVerified = true;
+  user.verified = Date.now();
+  user.verificationToken = ""; // bcs already verified
+  await user.save();
   res.status(StatusCodes.OK).json({
     msg: "Success. Email Verified",
   });
