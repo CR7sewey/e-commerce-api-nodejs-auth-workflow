@@ -10,3 +10,8 @@
 - [] setup fake verificationToken - 'fake token'
 - [] remove everything after User.create()
 - [] send back success message and token
+
+#### Update Login Controller
+
+- [] right after isPasswordCorrect
+- [] check if user.isVerified, if not 401

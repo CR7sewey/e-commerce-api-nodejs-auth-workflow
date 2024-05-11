@@ -34,12 +34,10 @@ const register = async (req, res) => {
 
   // WE will send a verification email then!! send verification token only while testing in postman
   // TODO
-  return res
-    .status(StatusCodes.CREATED)
-    .json({
-      msg: "Success. Check your email to verify your account!",
-      verificationToken,
-    });
+  return res.status(StatusCodes.CREATED).json({
+    msg: "Success. Check your email to verify your account!",
+    verificationToken,
+  });
 };
 
 const login = async (req, res) => {
@@ -58,6 +56,11 @@ const login = async (req, res) => {
   const validPassword = await user.validatePassword(password);
   if (!validPassword) {
     throw new UnauthenticatedError("Invalid Credentials!");
+  }
+  console.log(user);
+  if (!user.isVerified) {
+    // when user hav not verified is account on the email!
+    throw new UnauthenticatedError("Please verify your account");
   }
 
   const userToken = createTokenUser(user);
