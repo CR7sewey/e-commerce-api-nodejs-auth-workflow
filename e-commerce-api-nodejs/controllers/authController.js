@@ -4,9 +4,10 @@ const BadRequest = require("../errors/bad-request");
 const UnauthenticatedError = require("../errors/unauthenticated");
 const { generateToken, attachCookiesToResponse } = require("../utils/jwt");
 const createTokenUser = require("../utils/createTokenUser");
+const crypto = require("crypto");
 
 const fakeVerificationToken = ({ info }) => {
-  return info;
+  return crypto.randomBytes(40).toString("hex"); // hexadecimal
 };
 
 const register = async (req, res) => {
