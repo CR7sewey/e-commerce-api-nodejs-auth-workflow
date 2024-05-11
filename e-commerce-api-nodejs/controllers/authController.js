@@ -81,4 +81,27 @@ const logout = async (req, res) => {
   return res.status(StatusCodes.OK).json({ msg: "Logout with success!" });
 };
 
-module.exports = { register, login, logout };
+const verifyEmail = async (req, res) => {
+  const { verificationToken, email } = req.body; // from postman, then will be sent from the frontend
+  if (!verificationToken || !email) {
+    throw new BadRequest("Please introduce an email and token.");
+  }
+
+  const user = await User.findOne({ email });
+  if (!user) {
+    throw new UnauthenticatedError("Wrong email, no user.");
+  }
+  const userToken = await User.findOne({ email, verificationToken });
+  if (!userToken) {
+    throw new UnauthenticatedError("Token doesnt match the user!");
+  }
+  userToken.isVerified = true;
+  userToken.verified = Date.now();
+  userToken.verificationToken = ""; // bcs already verified
+  await userToken.save();
+  res.status(StatusCodes.OK).json({
+    msg: "Success. Email Verified",
+  });
+};
+
+module.exports = { register, login, logout, verifyEmail };
