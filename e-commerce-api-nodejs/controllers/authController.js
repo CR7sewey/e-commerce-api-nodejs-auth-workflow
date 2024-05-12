@@ -34,7 +34,14 @@ const register = async (req, res) => {
     verificationToken,
   }); // not ...req.body to not pass directly the role if inserted in postman!
 
-  const origin = "http://localhost:3000"; // where the frontend is running
+  const origin = "http://localhost:3000"; // where the frontend is running (development or prod)
+  // when we dont really know the url from front, or several urls
+  // where the server is located and from where comes de request (in headres)
+  // if we look for req.get(origin), it gives us the server location (bcs of the proxy I set up on the frontend)
+  // const protocol = req.protocol
+  //  const host = req.get('host');
+  // const forwardedHost = req.get('x-forwarded-host');
+  // const forwardedProtocol = req.get('x-forwarded-proto');
   await sendVerificationEmail({
     name: user.name,
     email: user.email,

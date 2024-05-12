@@ -64,3 +64,12 @@ the verify-email controller in the backend will be consumed (and the verificatio
 the email will be passed through req.body).
 Please note that when the email is sent, from teh backend, we send a link to a frontend
 page. Thats why verifyEmailURL in sendVerificationEmail is like that (that origin represents the domain from the front - in our case localhost://3000 but could be the production url).
+
+### Some side notes - check controller auth register
+  // when we dont really know the url from front, or several urls
+  // where the server is located and from where comes de request (in headres)
+  // if we look for req.get(origin), it gives us the server location (bcs of the proxy I set up on the frontend)
+  // const protocol = req.protocol
+  //  const host = req.get('host');
+  // const forwardedHost = req.get('x-forwarded-host');
+  // const forwardedProtocol = req.get('x-forwarded-proto');
