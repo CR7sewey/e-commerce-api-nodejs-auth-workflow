@@ -108,3 +108,11 @@ this value is the same). This is basically what was done till now.
 - Now I changed the authentication middleware to give the same result as before.
 If I run the app as before, it will work exactly the same, bcs the refreshToken
 is not being used anywhere.
+
+#### Refactor Auth Middleware - RefreshToken
+- Now what I've done? First, get both tokens. then, if we have the access token,
+we do the basic thing, which is to verify that token and all of that basic thing.
+If not, lets check if we have the refresh one. If not, throw an error. If yes,
+we are gonna check if the refreshToken received from verifyToken is present in
+the db (Token) and if is valid (only if exists). if this, then we need again
+to attachCookies to the response.
