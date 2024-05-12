@@ -6,6 +6,7 @@ const { generateToken, attachCookiesToResponse } = require("../utils/jwt");
 const createTokenUser = require("../utils/createTokenUser");
 const crypto = require("crypto");
 const sendVerificationEmail = require("../utils/sendVerificationEmail");
+const Token = require("../models/Token");
 
 const fakeVerificationToken = ({ info }) => {
   return crypto.randomBytes(40).toString("hex"); // hexadecimal
@@ -82,9 +83,21 @@ const login = async (req, res) => {
   const userToken = createTokenUser(user);
 
   const token = generateToken({ user: userToken });
-  attachCookiesToResponse({ res, token });
 
-  return res.status(StatusCodes.OK).json({ user: userToken });
+  // create refreshToken
+  let refreshToken = "";
+  // check for existing token: TODO
+
+  refreshToken = token;
+  const userAgent = req.headers["user-agent"];
+  const ip = req.ip;
+  console.log(ip);
+  const userRefreshToken = { refreshToken, userAgent, ip, user: user._id };
+  const tokenRefresh = await Token.create(userRefreshToken);
+
+  //attachCookiesToResponse({ res, token });
+
+  return res.status(StatusCodes.OK).json({ user: userToken, tokenRefresh });
 };
 
 const logout = async (req, res) => {
