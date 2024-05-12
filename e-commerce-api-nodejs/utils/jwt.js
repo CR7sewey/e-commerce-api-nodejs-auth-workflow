@@ -5,8 +5,7 @@ const generateToken = ({ user }) => {
   return token;
 };
 
-const verifyToken = ({ token }) =>
-  jwt.verify(token, process.env.TOKEN_SECRET_KEY);
+const verifyToken = (token) => jwt.verify(token, process.env.TOKEN_SECRET_KEY);
 
 const attachCookiesToResponse = ({ res, user, token }) => {
   const accessTokenJWT = generateToken({ user });
