@@ -52,3 +52,15 @@ plataform.
 - [] install nodemailer
 - [] create (nodemailerConfig, sendEmail,
   sendResetPasswordEmail, sendVerficationEmail) files in utils
+
+### sendVerificationEmail
+- Ok, so, the first to functions (nodemailerConfig, sendEmail) were only auxiliary functions
+to use here (and then in password). in the sendVerificationEmail, we received some
+basic stuff that will be used in sendEmail, such as email. However, we want to send
+to the user an email for the verification. On that email, when the <a> is clicked,
+it will be redirected to some page on the frontend. This page (already established on front)
+is expecting to receive on the url the token and the email. Then, in the frontend,
+the verify-email controller in the backend will be consumed (and the verificationToken and
+the email will be passed through req.body).
+Please note that when the email is sent, from teh backend, we send a link to a frontend
+page. Thats why verifyEmailURL in sendVerificationEmail is like that (that origin represents the domain from the front - in our case localhost://3000 but could be the production url).
