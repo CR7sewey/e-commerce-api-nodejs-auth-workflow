@@ -73,3 +73,25 @@ page. Thats why verifyEmailURL in sendVerificationEmail is like that (that origi
   //  const host = req.get('host');
   // const forwardedHost = req.get('x-forwarded-host');
   // const forwardedProtocol = req.get('x-forwarded-proto');
+
+#### Token - Idea
+
+- Till now, we have setup the token within our cookies. When there is a login, token is generated, with
+a certain lifetime (cookie) (stateless);
+ However, in the real production
+product, it makes sense to have an accessToken (with a small lifetime) and a refreshToken
+(with more lifeTime). If we only have the accessTOken, lets suppose with 5 minutes
+duration, after that the cookie will be erased and then automatically the user
+will be logged out. What is going to happen is that we will search not only for
+the accessTOken, but also for the refresh one. If the refresh is still valid but the 
+other one has expired, when updated the page, a the access token will be updated
+(=== refreshToken).
+- For that, we will do a token model, and perform with that later.
+
+#### Token Model
+
+- [] create Token.js in models
+- [] refreshToken,ip,userAgent - all String and required
+- [] isValid - Boolean, default:true
+- [] ref user
+- [] timestamps true
