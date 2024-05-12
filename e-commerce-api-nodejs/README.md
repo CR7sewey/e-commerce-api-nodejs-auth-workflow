@@ -44,3 +44,11 @@ So I'll configure a controller to verify email where we will do this
 - [] user.verificationToken = ''
 - [] save use with instance method
 - [] return msg:'email verified'
+
+#### Email Setup
+- I will use ethereal to simulate the email thing, but could be done with any other
+plataform.
+- [] ethereal credentials (create account/login)
+- [] install nodemailer
+- [] create (nodemailerConfig, sendEmail,
+  sendResetPasswordEmail, sendVerficationEmail) files in utils

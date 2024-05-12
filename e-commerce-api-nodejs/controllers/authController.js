@@ -5,6 +5,7 @@ const UnauthenticatedError = require("../errors/unauthenticated");
 const { generateToken, attachCookiesToResponse } = require("../utils/jwt");
 const createTokenUser = require("../utils/createTokenUser");
 const crypto = require("crypto");
+const sendEmail = require("../utils/sendEmail");
 
 const fakeVerificationToken = ({ info }) => {
   return crypto.randomBytes(40).toString("hex"); // hexadecimal
@@ -33,11 +34,16 @@ const register = async (req, res) => {
     verificationToken,
   }); // not ...req.body to not pass directly the role if inserted in postman!
 
+  await sendEmail({
+    to: email,
+    subject: "Test",
+    html: `<p>This is your token: ${verificationToken}</p>`,
+  });
+
   // WE will send a verification email then!! send verification token only while testing in postman
   // TODO
   return res.status(StatusCodes.CREATED).json({
     msg: "Success. Check your email to verify your account!",
-    verificationToken,
   });
 };
 
