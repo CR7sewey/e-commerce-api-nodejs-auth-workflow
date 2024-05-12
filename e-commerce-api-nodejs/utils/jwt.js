@@ -17,7 +17,7 @@ const attachCookiesToResponse = ({ res, user, token }) => {
     //expires: new Date(Date.now() + 5 * 60000), // 5 minutes
     secure: process.env.NODE_ENV === "production", // ture or false
     signed: true,
-    maxAge: 1000,
+    maxAge: 10000,
   });
   res.cookie("refreshToken", refreshTokenJWT, {
     httpOnly: true,

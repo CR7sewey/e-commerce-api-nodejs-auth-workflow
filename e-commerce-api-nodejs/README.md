@@ -95,3 +95,16 @@ other one has expired, when updated the page, a the access token will be updated
 - [] isValid - Boolean, default:true
 - [] ref user
 - [] timestamps true
+
+#### Refactor Auth Middleware - AccessToken
+- I forgot to write, but I've done a series of changes in which basically it is
+created two cookies, the access and the refresh, and also a little refactoring
+of the login controller to generate thi new two cookies. the access one, is equal
+to the previous one, where the cookie is generated based on the same user info, I
+just changed the time to check if it's working. On the other hand, the refresh token
+have a plus info, which is the refreshToken generated on login controller (this token is
+only generated once, after that, is stored in the database and when generating the cookies
+this value is the same). This is basically what was done till now.
+- Now I changed the authentication middleware to give the same result as before.
+If I run the app as before, it will work exactly the same, bcs the refreshToken
+is not being used anywhere.

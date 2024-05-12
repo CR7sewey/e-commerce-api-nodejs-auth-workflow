@@ -5,7 +5,7 @@ const { verifyToken, attachCookiesToResponse } = require("../utils/jwt");
 require("dotenv").config();
 
 const tokenExists = async (req, res, next) => {
-  let token = req.signedCookies.token;
+  let token = req.signedCookies.accessToken;
   if (!token) {
     const authorization = req.headers.authorization;
     if (!authorization) {
