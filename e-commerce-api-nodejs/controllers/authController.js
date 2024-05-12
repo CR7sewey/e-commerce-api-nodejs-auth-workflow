@@ -8,7 +8,7 @@ const crypto = require("crypto");
 const sendVerificationEmail = require("../utils/sendVerificationEmail");
 const Token = require("../models/Token");
 
-const fakeVerificationToken = ({ info }) => {
+const fakeVerificationToken = () => {
   return crypto.randomBytes(40).toString("hex"); // hexadecimal
 };
 
@@ -25,7 +25,7 @@ const register = async (req, res) => {
   const role = isFirstAcc ? "admin" : "user";
   // Token that is going to be used later to verify later once the user is signing in through the frontend
   // TODO!!
-  const verificationToken = fakeVerificationToken({ info: "fake token" });
+  const verificationToken = fakeVerificationToken();
 
   const user = await User.create({
     name,
@@ -82,22 +82,24 @@ const login = async (req, res) => {
 
   const userToken = createTokenUser(user);
 
-  const token = generateToken({ user: userToken });
+  // changed, created in attachCookiesResponse
+  //const token = generateToken({ user: userToken });
 
   // create refreshToken
   let refreshToken = "";
   // check for existing token: TODO
 
-  refreshToken = token;
+  refreshToken = fakeVerificationToken();
   const userAgent = req.headers["user-agent"];
   const ip = req.ip;
   console.log(ip);
   const userRefreshToken = { refreshToken, userAgent, ip, user: user._id };
   const tokenRefresh = await Token.create(userRefreshToken);
 
-  //attachCookiesToResponse({ res, token });
+  // changed to create the access and refresh token
+  attachCookiesToResponse({ res, user: userToken, token: refreshToken });
 
-  return res.status(StatusCodes.OK).json({ user: userToken, tokenRefresh });
+  return res.status(StatusCodes.OK).json({ user: userToken });
 };
 
 const logout = async (req, res) => {
