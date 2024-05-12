@@ -16,7 +16,7 @@ router.post(
   register
 );
 router.post("/login", login);
-router.get("/logout", tokenExists, logout); // needs tokenMiddleware!
+router.delete("/logout", tokenExists, logout); // chenged to delete bcs of the frontwned
 router.post("/verify-email", verifyEmail);
 
 module.exports = router;

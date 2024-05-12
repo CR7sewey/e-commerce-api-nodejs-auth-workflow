@@ -111,11 +111,17 @@ const login = async (req, res) => {
 };
 
 const logout = async (req, res) => {
+  await Token.findOneAndDelete({ user: req.user._id });
   req.user = {};
-  res.cookie("token", "logout", {
+  res.cookie("accessToken", "logout", {
     httpOnly: true,
     expires: new Date(Date.now()), // dont generate a cookie; could put Date.now() + 1000 (1 second) - generates a cookie
   });
+  res.cookie("refreshToken", "logout", {
+    httpOnly: true,
+    expires: new Date(Date.now()), // dont generate a cookie; could put Date.now() + 1000 (1 second) - generates a cookie
+  });
+
   return res.status(StatusCodes.OK).json({ msg: "Logout with success!" });
 };
 
