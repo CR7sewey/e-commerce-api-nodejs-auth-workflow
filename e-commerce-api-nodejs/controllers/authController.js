@@ -88,13 +88,21 @@ const login = async (req, res) => {
   // create refreshToken
   let refreshToken = "";
   // check for existing token: TODO
-
-  refreshToken = fakeVerificationToken();
-  const userAgent = req.headers["user-agent"];
-  const ip = req.ip;
-  console.log(ip);
-  const userRefreshToken = { refreshToken, userAgent, ip, user: user._id };
-  const tokenRefresh = await Token.create(userRefreshToken);
+  const tokenAlreadyExists = await Token.findOne({ user: user._id });
+  if (tokenAlreadyExists) {
+    const { isValid } = tokenAlreadyExists;
+    if (!isValid) {
+      throw new UnauthenticatedError("You need to log in again.");
+    }
+    refreshToken = tokenAlreadyExists.refreshToken;
+  } else {
+    // only creates when does not exists on the db
+    refreshToken = fakeVerificationToken();
+    const userAgent = req.headers["user-agent"];
+    const ip = req.ip;
+    const userRefreshToken = { refreshToken, userAgent, ip, user: user._id };
+    const tokenRefresh = await Token.create(userRefreshToken);
+  }
 
   // changed to create the access and refresh token
   attachCookiesToResponse({ res, user: userToken, token: refreshToken });
