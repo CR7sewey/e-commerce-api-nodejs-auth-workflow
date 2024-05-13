@@ -178,28 +178,26 @@ const forgotPassword = async (req, res) => {
 };
 
 const resetPassword = async (req, res) => {
-  const { email, passwordToken, newPassword } = req.body;
-  if (!passwordToken || !email) {
-    throw new BadRequest("Please introduce an email and token.");
+  const { email, passwordToken, password } = req.body;
+  if (!passwordToken || !email || !password) {
+    throw new BadRequest("Please introduce an email and token and password.");
   }
   const user = await User.findOne({ email });
   console.log(new Date(Date.now()));
-  if (
-    user.passwordTokenExpirationDate < new Date(Date.now()) ||
-    user.passwordToken !== passwordToken
-  ) {
-    throw new UnauthenticatedError("Reset of password has failed.");
+  if (user) {
+    if (
+      user.passwordTokenExpirationDate < new Date(Date.now()) ||
+      user.passwordToken !== passwordToken
+    ) {
+      user.password = password;
+      user.passwordToken = null;
+      user.passwordTokenExpirationDate = null;
+      await user.save();
+      res.status(StatusCodes.OK).json({
+        msg: "Success. Password reseted. Please Log in.",
+      });
+    }
   }
-  if (!newPassword) {
-    throw new BadRequest("You need to provide a password.");
-  }
-
-  user.password = newPassword;
-  user.passwordToken = "";
-  await user.save();
-  res.status(StatusCodes.OK).json({
-    msg: "Success. Password reseted. Please Log in.",
-  });
 };
 
 module.exports = {
