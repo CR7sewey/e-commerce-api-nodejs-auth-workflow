@@ -8,6 +8,7 @@ const crypto = require("crypto");
 const sendVerificationEmail = require("../utils/sendVerificationEmail");
 const sendResetPasswordEmail = require("../utils/sendResetPasswordEmail");
 const Token = require("../models/Token");
+const createHash = require("../utils/createHash");
 
 const fakeVerificationToken = () => {
   return crypto.randomBytes(40).toString("hex"); // hexadecimal
@@ -160,17 +161,18 @@ const forgotPassword = async (req, res) => {
     // double check!
     throw new UnauthenticatedError("Email doesnt exists.");
   }
-  user.passwordToken = fakeVerificationToken();
-  user.passwordTokenExpirationDate = new Date(Date.now() + 5 * 60 * 1000); // 5 min
-  await user.save();
+  const passwordToken = fakeVerificationToken();
   const origin = "http://localhost:3000"; // where the frontend is running (development or prod)
-
   await sendResetPasswordEmail({
     name: user.name,
     email: user.email,
-    passwordToken: user.passwordToken,
+    passwordToken: passwordToken,
     origin,
   });
+
+  user.passwordTokenExpirationDate = new Date(Date.now() + 5 * 60 * 1000); // 5 min
+  user.passwordToken = createHash(passwordToken);
+  await user.save();
 
   return res.status(StatusCodes.OK).json({
     msg: "Success. Check your email to reset your password!",
@@ -186,18 +188,18 @@ const resetPassword = async (req, res) => {
   console.log(new Date(Date.now()));
   if (user) {
     if (
-      user.passwordTokenExpirationDate < new Date(Date.now()) ||
-      user.passwordToken !== passwordToken
+      user.passwordTokenExpirationDate > new Date(Date.now()) &&
+      user.passwordToken === createHash(passwordToken)
     ) {
       user.password = password;
       user.passwordToken = null;
       user.passwordTokenExpirationDate = null;
       await user.save();
-      res.status(StatusCodes.OK).json({
-        msg: "Success. Password reseted. Please Log in.",
-      });
     }
   }
+  res.status(StatusCodes.OK).json({
+    msg: "Success. Password reseted. Please Log in.",
+  }); // bcs of hackers dont know if the reset was or not successfull
 };
 
 module.exports = {
