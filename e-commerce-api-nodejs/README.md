@@ -116,3 +116,13 @@ If not, lets check if we have the refresh one. If not, throw an error. If yes,
 we are gonna check if the refreshToken received from verifyToken is present in
 the db (Token) and if is valid (only if exists). if this, then we need again
 to attachCookies to the response.
+
+#### Forgot/Reset Password Functionality
+
+- User Model
+- passwordToken {type:String}
+- passwordTokenExpirationDate {type:Date}
+- authController
+- forgotPassword and resetPassword
+- authRoutes
+- post '/forgot-password' 'reset-password'

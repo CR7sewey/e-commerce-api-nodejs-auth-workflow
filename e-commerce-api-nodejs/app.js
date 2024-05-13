@@ -30,7 +30,7 @@ const dbConnection = require("./db/connect");
 
 // Middlewares
 app.set("trust proxy", 1);
-app.use(
+/*app.use(
   rateLimiter({
     windowMs: 15 * 60 * 1000, // 15 minutes
     max: 10,
@@ -38,7 +38,7 @@ app.use(
       msg: "To many requests from this IP, please try again after 15 minutes",
     },
   })
-);
+);*/
 app.use(helmet());
 app.use(cors());
 app.use(xss());
